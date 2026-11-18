@@ -1,0 +1,692 @@
+﻿<Window x:Class="RsskWorkTeacher.Wind.winAddChangeRpPm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RsskWorkTeacher.Wind"
+        mc:Ignorable="d"
+             Title="Редактор учебной документации (Полное редактирование)" Height="850" Width="1400"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ToolBarTray Grid.Row="1" Background="#E5E5E5">
+            <ToolBar>
+                <Button Content="💾 Сохранить" Padding="5,2" Click="ButtonSave_Click"/>
+                <Separator/>
+                <ComboBox Width="250" SelectedIndex="0" ToolTip="Выбор типа документа" SelectionChanged="ComboBox_SelectionChanged">
+                    <ComboBoxItem Content="Шаблон рабочей программы"/>
+                    <ComboBoxItem x:Name="cbiRPonWork" Content="Текущая рабочая программа" />
+                </ComboBox>
+                <Separator/>
+                <Button Content="Экспорт в PDF" Padding="5,2" Click="BtnExportPdf_Click"/>
+                <Button Content="Импорт информации из ПООП (.docx)" Click="BtnImportPopp_Click" Padding="5,2"/>
+            </ToolBar>
+        </ToolBarTray>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TabControl Grid.Column="2" Margin="5">
+
+                <!-- Вкладка 1: Титульный лист и Утверждение -->
+                <TabItem Header="Титульный лист">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="20" Background="#FAFAFA">
+                        <StackPanel>
+                            <TextBlock x:Name="tbTitle" Text="{Binding Title}"
+                                       FontWeight="Bold" TextWrapping="Wrap" TextAlignment="Center"></TextBlock>
+                            <Grid Margin="0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- ИСПРАВЛЕНО: имя свойства приводим к тому, что есть в VM -->
+                                <TextBlock x:Name="tbdicipKod"
+                                           Text="{Binding DisciplineKod}"
+                                           FontSize="16" FontWeight="Bold" Margin="20"
+                                           HorizontalAlignment="Center" />
+
+                                <!-- ИСПРАВЛЕНО: SelectedValue вместо Text, убран SelectedIndex -->
+                                <ComboBox SelectionChanged="tbdicip_SelectionChanged"
+                                          x:Name="tbdicip"
+                                          Grid.Column="1"
+                                          FontSize="16" FontWeight="Bold"
+                                          Margin="20"
+                                          HorizontalAlignment="Center"
+                                          SelectedValuePath="Content"
+                                          SelectedValue="{Binding DisciplineName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </Grid>
+
+                            <Grid Margin="0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Специальность:" FontWeight="Bold" TextWrapping="Wrap"/>
+                                <TextBlock x:Name="tbSpecial" Grid.Column="1" Text="{Binding Specialty}" TextWrapping="Wrap"/>
+                            </Grid>
+                            <Grid Margin="0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Квалификация:" FontWeight="Bold" TextWrapping="Wrap"/>
+                                <TextBlock x:Name="tbKvalificac" Grid.Column="1" Text="{Binding Qualification}" TextWrapping="Wrap"/>
+                            </Grid>
+                            <Grid Margin="0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Форма обучения:" FontWeight="Bold" TextWrapping="Wrap"/>
+                                <ComboBox x:Name="cbFormObuch" Grid.Column="1" SelectedValuePath="Content" SelectedValue="{Binding EducationForm}">
+                                    <ComboBoxItem Content="очная"/>
+                                    <ComboBoxItem Content="заочная"/>
+                                </ComboBox>
+                            </Grid>
+
+                            <GroupBox Header="Сведения об утверждении" Margin="0,20,0,0">
+                                <Grid Margin="5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Text="Протокол №:" Grid.Row="0" Grid.Column="0" Margin="0,5"/>
+                                    <TextBox x:Name="tbProtocolNumber" Text="{Binding ProtocolNumber, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="1" Margin="0,5"/>
+
+                                    <TextBlock Text="Дата:" Grid.Row="1" Grid.Column="0" Margin="0,5"/>
+                                    <DatePicker x:Name="tbProtocolDate" SelectedDate="{Binding ProtocolDate}" Grid.Row="1" Grid.Column="1" Margin="0,5"/>
+
+                                    <TextBlock Text="Председатель:" Grid.Row="2" Grid.Column="0" Margin="0,5"/>
+                                    <TextBox x:Name="tbProtocolPredsedatel" Text="{Binding ProtocolPredsedatel, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="1" Margin="0,5"/>
+                                </Grid>
+                            </GroupBox>
+
+                            <GroupBox Header="Утверждено на методическом совете" Margin="0,20,0,0">
+                                <Grid Margin="5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Text="Протокол №:" Grid.Row="0" Grid.Column="0" Margin="0,5"/>
+                                    <TextBox x:Name="tbProtocolSovetNumber" Text="{Binding ProtocolSovetNumber, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="1" Margin="0,5"/>
+
+                                    <TextBlock Text="Дата:" Grid.Row="1" Grid.Column="0" Margin="0,5"/>
+                                    <DatePicker x:Name="tbProtocolSovetDate" SelectedDate="{Binding ProtocolSovetDate}" Grid.Row="1" Grid.Column="1" Margin="0,5"/>
+                                </Grid>
+                            </GroupBox>
+
+                            <DataGrid x:Name="dgRazrabs" ItemsSource="{Binding Developers}" AutoGenerateColumns="False" Margin="0,20,0,0">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="ФИО разработчика" Binding="{Binding FullName}" Width="*"/>
+                                    <DataGridTextColumn Header="Должность" Binding="{Binding Position}" Width="*"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+
+                <!-- Вкладка 2: Раздел 1 -->
+                <TabItem Header="Раздел 1. Общая характеристика">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="20" Background="White">
+                        <StackPanel>
+                            <TextBlock Text="1.1 Цель и место учебной дисциплины" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                            <TextBlock Text="Цель дисциплины:" FontWeight="Bold"/>
+                            <TextBox x:Name="tbPurpose" Text="{Binding Purpose, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="60" Margin="0,5,0,15"/>
+                            <TextBlock x:Name="tbCompetencies" Text="{Binding CompetenciesLabel}" />
+
+                            <TextBlock Text="1.2 Планируемые результаты освоения дисциплины" FontSize="16" FontWeight="Bold" Margin="0,20,0,10"/>
+                            <TextBlock Text="В результате освоения дисциплины обучающийся должен:" Margin="0,0,0,5"/>
+
+                            <DataGrid x:Name="dgCompetencies" ItemsSource="{Binding Competencies}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" MinHeight="250" Margin="0,5" EnableRowVirtualization="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Код ОК, ПК" Width="100" Binding="{Binding Code, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <DataGridTextColumn Header="Уметь" Width="*" Binding="{Binding KnowHow, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <DataGridTextColumn Header="Знать" Width="*" Binding="{Binding Knowledge, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <DataGridTextColumn Header="Владеть навыками" Width="*" Binding="{Binding Skil, UpdateSourceTrigger=PropertyChanged}"/>
+
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+
+                <!-- Вкладка 3: Раздел 2 -->
+                <TabItem Header="Раздел 2. Структура и содержание">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="20" Background="White">
+
+
+
+
+                        <StackPanel Grid.Row="0"  Orientation="Vertical" Margin="0,0,0,10">
+                      
+                            <Expander  x:Name="exModule21" DataContext="{Binding Module21}">
+                                <Expander.Header>
+                                    <TextBlock FontWeight="Bold"  FontSize="16" Text="2.1 Трудоемкость освоения модуля"/>
+                                </Expander.Header>
+                                <StackPanel>
+                                    <!-- Шапка -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Наименование составных частей модуля" FontSize="14" FontWeight="Bold" Margin="5"/>
+                                        <TextBlock Grid.Column="1" Text="Объем в часах" FontSize="14" FontWeight="Bold" Margin="5"/>
+                                        <TextBlock Grid.Column="2" Text="В т.ч. в форме практической подготовки" FontSize="14" FontWeight="Bold" Margin="5"/>
+                                    </Grid>
+
+                                    <!-- 1. Учебные занятия -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Учебные занятия" FontSize="14" Margin="5"/>
+                                        <TextBlock Grid.Column="1" x:Name="tbLearn1" Text="{Binding LearnTotal}" FontSize="14" Margin="5"/>
+                                        <TextBlock Grid.Column="2" x:Name="tbLearn2" Text="{Binding LearnPractical}" FontSize="14" Margin="5"/>
+                                    </Grid>
+
+                                    <!-- 3. Курсовая работа -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Курсовая работа" FontSize="14" Margin="5"/>
+                                        <TextBlock Grid.Column="1" x:Name="tbKursach1" Text="{Binding CourseworkTotal}" FontSize="14" Margin="5"/>
+                                        <TextBlock Grid.Column="2" x:Name="tbKursach2" Text="{Binding CourseworkPractical}" FontSize="14" Margin="5"/>
+                                    </Grid>
+                                    <!-- 2. Самостоятельная работа -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Самостоятельная работа" FontSize="14" Margin="5"/>
+                                        <TextBlock Grid.Column="1" x:Name="tbSalfWork" Text="{Binding SelfWorkTotal}" FontSize="14" Margin="5"/>
+                                    </Grid>
+
+                                    <!-- 3. Практика, в т.ч.: -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Практика, в т.ч.:" FontSize="14" Margin="5"/>
+                                        <TextBlock Grid.Column="1" x:Name="tbPract1" Text="{Binding PracticeTotal}" FontSize="14" Margin="5"/>
+                                        <TextBlock Grid.Column="2" x:Name="tbPract2" Text="{Binding PracticePractical}" FontSize="14" Margin="5"/>
+                                    </Grid>
+
+                                    <!-- 4. учебная -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="   учебная" FontSize="14" Margin="5"/>
+                                        <TextBlock Grid.Column="1" x:Name="tbPractLearn1" Text="{Binding PracticeEduTotal}" FontSize="14" Margin="5"/>
+                                        <TextBlock Grid.Column="2" x:Name="tbPractLearn2" Text="{Binding PracticeEduPractical}" FontSize="14" Margin="5"/>
+                                    </Grid>
+
+                                    <!-- 5. производственная -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="   производственная" FontSize="14" Margin="5"/>
+                                        <TextBlock Grid.Column="1" x:Name="tbPractProis1" Text="{Binding PracticeIndTotal}" FontSize="14" Margin="5"/>
+                                        <TextBlock Grid.Column="2" x:Name="tbPractProis2" Text="{Binding PracticeIndPractical}" FontSize="14" Margin="5"/>
+                                    </Grid>
+
+                                    <!-- 6. Промежуточная аттестация -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Промежуточная аттестация" FontSize="14" Margin="5"/>
+                                        <TextBlock Grid.Column="1" x:Name="tbAttestationModule" Text="{Binding Attestation}" FontSize="14" Margin="5" TextWrapping="Wrap"/>
+                                    </Grid>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Всего" FontSize="14" Margin="5"/>
+                                        <TextBlock Grid.Column="1" x:Name="tbTotalModule1" Text="{Binding TotalHours}" FontSize="14" Margin="5" TextWrapping="Wrap"/>
+                                        <TextBlock Grid.Column="2" x:Name="tbTotalModule2" Text="{Binding TotalPractical}" FontSize="14" Margin="5" TextWrapping="Wrap"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Expander>
+
+                            <Expander x:Name="exModule22">
+                                <Expander.Header>
+                                    <TextBlock FontWeight="Bold" FontSize="16" Text="2.2 Структура профессионального модуля"/>
+                                </Expander.Header>
+                                <DataGrid x:Name="dgModuleStructure"  ItemsSource="{Binding ModuleStructures}" 
+                                 AutoGenerateColumns="False"  CanUserAddRows="True"
+                                 CanUserDeleteRows="True"  GridLinesVisibility="All"
+                                 HeadersVisibility="Column" HorizontalGridLinesBrush="Black"
+                                 VerticalGridLinesBrush="Black" BorderBrush="Black"
+                                 BorderThickness="1" FontFamily="Times New Roman" FontSize="12">
+
+                                    <DataGrid.Resources>
+                                        <!-- Стиль для заголовков, чтобы текст переносился на новую строку -->
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                            <Setter Property="Padding" Value="5"/>
+                                            <Setter Property="Background" Value="#F0F0F0"/>
+                                            <Setter Property="BorderBrush" Value="Black"/>
+                                            <Setter Property="BorderThickness" Value="1"/>
+                                        </Style>
+                                        <!-- Стиль для ячеек -->
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="Block.TextAlignment" Value="Center"/>
+                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                            <Setter Property="BorderBrush" Value="Black"/>
+                                            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                        </Style>
+                                    </DataGrid.Resources>
+
+                                    <DataGrid.Columns>
+                                        <!-- 1. Код ПК -->
+                                        <DataGridTextColumn Header="Код ПК" Binding="{Binding CompetencyCodes}" Width="80" />
+
+                                        <!-- 2. Наименования разделов -->
+                                        <DataGridTextColumn Header="Наименования разделов профессионального модуля" Binding="{Binding ModuleName}" Width="*" MinWidth="200">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                                    <Setter Property="TextAlignment" Value="Left"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+
+                                        <!-- 3. Всего -->
+                                        <DataGridTextColumn Header="Всего, час." Binding="{Binding TotalHours}" Width="60" />
+
+                                        <!-- 4. Практ. подготовка -->
+                                        <DataGridTextColumn Header="в т.ч. в форме практической подготовки" Binding="{Binding PracticalPrepHours}" Width="75">
+                                            <DataGridTextColumn.HeaderStyle>
+                                                <Style TargetType="DataGridColumnHeader">
+                                                    <Setter Property="ContentTemplate">
+                                                        <Setter.Value>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="в т.ч. в форме практичес-кой подго-товки" TextWrapping="Wrap" TextAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </DataGridTextColumn.HeaderStyle>
+                                        </DataGridTextColumn>
+
+                                        <!-- 5. Обучение по МДК -->
+                                        <DataGridTextColumn Header="Обучение по МДК, в т.ч.:" Binding="{Binding MdkHours}" Width="75">
+                                            <DataGridTextColumn.HeaderStyle>
+                                                <Style TargetType="DataGridColumnHeader">
+                                                    <Setter Property="ContentTemplate">
+                                                        <Setter.Value>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="Обучение по МДК, в т.ч.:" TextWrapping="Wrap" TextAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </DataGridTextColumn.HeaderStyle>
+                                        </DataGridTextColumn>
+
+                                        <!-- 6. Учебные занятия -->
+                                        <DataGridTextColumn Header="учебные занятия" Binding="{Binding TrainingSessionsHours}" Width="70">
+                                            <DataGridTextColumn.HeaderStyle>
+                                                <Style TargetType="DataGridColumnHeader">
+                                                    <Setter Property="ContentTemplate">
+                                                        <Setter.Value>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="учебные занятия" TextWrapping="Wrap" TextAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </DataGridTextColumn.HeaderStyle>
+                                        </DataGridTextColumn>
+
+                                        <!-- 7. Курсовая работа -->
+                                        <DataGridTextColumn Header="курсовая работа (проект)" Binding="{Binding CourseworkHours}" Width="75">
+                                            <DataGridTextColumn.HeaderStyle>
+                                                <Style TargetType="DataGridColumnHeader">
+                                                    <Setter Property="ContentTemplate">
+                                                        <Setter.Value>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="курсовая работа (проект)" TextWrapping="Wrap" TextAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </DataGridTextColumn.HeaderStyle>
+                                        </DataGridTextColumn>
+
+                                        <!-- 8. Самостоятельная работа -->
+                                        <DataGridTextColumn Header="самостоятельная работа" Binding="{Binding IndependentWorkHours}" Width="75">
+                                            <DataGridTextColumn.HeaderStyle>
+                                                <Style TargetType="DataGridColumnHeader">
+                                                    <Setter Property="ContentTemplate">
+                                                        <Setter.Value>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="самостоя-тельная работа" TextWrapping="Wrap" TextAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </DataGridTextColumn.HeaderStyle>
+                                        </DataGridTextColumn>
+
+                                        <!-- 9. Учебная практика -->
+                                        <DataGridTextColumn Header="Учебная практика" Binding="{Binding EducationalPracticeHours}" Width="75">
+                                            <DataGridTextColumn.HeaderStyle>
+                                                <Style TargetType="DataGridColumnHeader">
+                                                    <Setter Property="ContentTemplate">
+                                                        <Setter.Value>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="Учебная практика" TextWrapping="Wrap" TextAlignment="Center" FontWeight="Bold"/>
+                                                            </DataTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </DataGridTextColumn.HeaderStyle>
+                                        </DataGridTextColumn>
+
+                                        <!-- 10. Производственная практика -->
+                                        <DataGridTextColumn Header="Производственная практика" Binding="{Binding IndustrialPracticeHours}" Width="75">
+                                            <DataGridTextColumn.HeaderStyle>
+                                                <Style TargetType="DataGridColumnHeader">
+                                                    <Setter Property="ContentTemplate">
+                                                        <Setter.Value>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="Производ-ственная практика" TextWrapping="Wrap" TextAlignment="Center" FontWeight="Bold"/>
+                                                            </DataTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </DataGridTextColumn.HeaderStyle>
+                                        </DataGridTextColumn>
+
+                                        <!-- 11. Промежуточная аттестация -->
+                                        <DataGridTextColumn Header="Промежуточная аттестация" Binding="{Binding AssessmentHours}" Width="75">
+                                            <DataGridTextColumn.HeaderStyle>
+                                                <Style TargetType="DataGridColumnHeader">
+                                                    <Setter Property="ContentTemplate">
+                                                        <Setter.Value>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="Промежу-точная аттестация" TextWrapping="Wrap" TextAlignment="Center" FontWeight="Bold"/>
+                                                            </DataTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </DataGridTextColumn.HeaderStyle>
+                                        </DataGridTextColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Expander>
+                            <Expander Grid.Row="1" x:Name="exDiscip22">
+                                <Expander.Header>
+                                    <TextBlock Text="2.2 Тематический план и содержание" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                                </Expander.Header>
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal" >
+                                        <Button Content="Добавить тему" Padding="10,5" Margin="5" Click="btnAddThem"/>
+                                        <Button Content="Изменить тему" Padding="10,5" Margin="5" Click="btnChangeThem"/>
+                                        <Button Content="Удалить тему" Padding="10,5" Margin="5" Click="btnDelThem"/>
+                                    </StackPanel>
+                                    <DataGrid x:Name="dgPlan" ItemsSource="{Binding Themes}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+          GridLinesVisibility="All" RowHeaderWidth="0" VerticalContentAlignment="Stretch" Background="White">
+                                        <DataGrid.Columns>
+                                            <!-- 1. Название темы / раздела -->
+                                            <DataGridTextColumn Header="Наименование разделов и тем" Width="250" Binding="{Binding ThemeName}">
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="TextWrapping" Value="Wrap"/>
+                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                                        <Setter Property="Margin" Value="5"/>
+                                                        <Style.Triggers>
+                                                            <!-- Триггер для раздела -->
+                                                            <DataTrigger Binding="{Binding IsSection}" Value="True">
+                                                                <Setter Property="Background" Value="#E0E0E0"/>
+                                                                <!-- Серый фон -->
+                                                                <Setter Property="TextAlignment" Value="Center"/>
+                                                                <Setter Property="FontSize" Value="14"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
+
+                                            <!-- 2. Содержание (скрывается, если это раздел) -->
+                                            <DataGridTemplateColumn Header="Содержание учебного материала" Width="*">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <ContentControl>
+                                                            <ContentControl.Style>
+                                                                <Style TargetType="ContentControl">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsSection}" Value="True">
+                                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </ContentControl.Style>
+                                                            <ItemsControl ItemsSource="{Binding ContentBlocks}" BorderBrush="LightGray" BorderThickness="0">
+                                                                <ItemsControl.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <Grid>
+                                                                            <Grid.ColumnDefinitions>
+                                                                                <ColumnDefinition Width="*"/>
+                                                                                <ColumnDefinition Width="60"/>
+                                                                            </Grid.ColumnDefinitions>
+                                                                            <TextBlock Text="{Binding Description}" TextWrapping="Wrap" Margin="5,2" VerticalAlignment="Center"/>
+                                                                            <TextBlock Text="{Binding Hours}" Grid.Column="1" Margin="5,2" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10,0"/>
+                                                                            <Border Grid.ColumnSpan="2" BorderBrush="LightGray" BorderThickness="0,0,0,1" Margin="0,0,0,0" VerticalAlignment="Bottom"/>
+                                                                        </Grid>
+                                                                    </DataTemplate>
+                                                                </ItemsControl.ItemTemplate>
+                                                            </ItemsControl>
+                                                        </ContentControl>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+
+                                            <!-- 3. Всего часов (скрывается, если это раздел) -->
+                                            <DataGridTextColumn Header="Всего часов" Width="80" Binding="{Binding TotalHours}">
+                                                <DataGridTextColumn.CellStyle>
+                                                    <Style TargetType="DataGridCell">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsSection}" Value="True">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </DataGridTextColumn.CellStyle>
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
+
+                                            <!-- 4. Компетенции (скрывается, если это раздел) -->
+                                            <DataGridTextColumn Header="Компетенции" Width="120" Binding="{Binding Competences}">
+                                                <DataGridTextColumn.CellStyle>
+                                                    <Style TargetType="DataGridCell">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsSection}" Value="True">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </DataGridTextColumn.CellStyle>
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="TextWrapping" Value="Wrap"/>
+                                                        <Setter Property="TextAlignment" Value="Center"/>
+                                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </Expander>
+                        </StackPanel>
+
+                    </ScrollViewer>
+                </TabItem>
+
+                <!-- Вкладка 4: Раздел 3 -->
+                <TabItem Header="Раздел 3. Условия">
+                    <ScrollViewer>
+                        
+                    
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Expander>
+                            <Expander.Header>
+                                <TextBlock FontSize="16" Text="3.1 Требования к минимальному материально-техническому обеспечению" FontWeight="Bold"/>
+                            </Expander.Header>
+                            <StackPanel>
+                                <TextBox x:Name="tbTrebKab" Text="{Binding TrebKab, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="60" Margin="0,5,0,15"/>
+                            </StackPanel>
+                        </Expander>
+                        <Expander Grid.Row="2">
+                            <Expander.Header>
+                                <TextBlock Grid.Row="1" Text="3.2 Информационное обеспечение (Литература и ПО)" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                            </Expander.Header>
+                            <StackPanel>
+                                <TabControl>
+                                    <TabItem Header="Основная литература">
+                                        <DataGrid x:Name="dgOsnovLibrary" ItemsSource="{Binding OsnovLibrary}" AutoGenerateColumns="False" CanUserAddRows="True">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="Библиотечная запись" Width="*" Binding="{Binding Record}"/>
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                    </TabItem>
+
+                                    <TabItem Header="Дополнительная литература">
+                                        <DataGrid x:Name="dgDopLibrary" ItemsSource="{Binding DopLibrary}" AutoGenerateColumns="False" CanUserAddRows="True">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="Библиотечная запись" Width="*" Binding="{Binding Record}"/>
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                    </TabItem>
+
+                                    <TabItem Header="Программное обеспечение">
+                                        <DataGrid x:Name="dgPO" ItemsSource="{Binding Softwares}" AutoGenerateColumns="False" CanUserAddRows="True">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="Наименование ПО" Width="*" Binding="{Binding Name}"/>
+                                                <DataGridTextColumn Header="Тип лицензии" Width="*" Binding="{Binding LicenseType}"/>
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                    </TabItem>
+                                </TabControl>
+                            </StackPanel>
+                        </Expander>
+                    </Grid>
+                    </ScrollViewer>
+                </TabItem>
+
+                <TabItem Header="Раздел 4. Контроль и оценка">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="20" Background="White">
+                        <StackPanel>
+                            <TextBlock Text="4 КОНТРОЛЬ И ОЦЕНКА РЕЗУЛЬТАТОВ ОСВОЕНИЯ УЧЕБНОЙ ДИСЦИПЛИНЫ"
+                                       FontSize="16" FontWeight="Bold" Margin="0,0,0,15" TextWrapping="Wrap"/>
+
+                            <DataGrid x:Name="dgEvaluations" ItemsSource="{Binding Evaluations}"
+                                      AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True"
+                                      GridLinesVisibility="All" RowHeaderWidth="0" VerticalContentAlignment="Stretch"
+                                      Background="White" MinHeight="400">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Результаты обучения" Width="250" Binding="{Binding LearningOutcome}">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="TextWrapping" Value="Wrap"/>
+                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                <Setter Property="Margin" Value="5"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn Header="Показатели освоенности компетенций" Width="*" Binding="{Binding Indicators}">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="TextWrapping" Value="Wrap"/>
+                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                <Setter Property="Margin" Value="5"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn Header="Методы оценки" Width="120" Binding="{Binding AssessmentMethod}">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="TextWrapping" Value="Wrap"/>
+                                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                <Setter Property="Margin" Value="5"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+            </TabControl>
+        </Grid>
+
+        <StatusBar Grid.Row="3" Background="#F0F0F0">
+            <StatusBarItem>
+                <TextBlock Text="Режим: Полное редактирование"/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>

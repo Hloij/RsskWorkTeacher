@@ -1,0 +1,71 @@
+﻿<Window x:Class="RsskWorkTeacher.Wind.winAddChangeKtp"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RsskWorkTeacher.Wind"
+        mc:Ignorable="d"
+        Title="Редактор КТП" Height="700" Width="1000" WindowStartupLocation="CenterScreen">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <GroupBox Header="Параметры КТП" Grid.Row="0" Margin="0,0,0,10">
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Группы:" VerticalAlignment="Center"/>
+                <ComboBox x:Name="cbGroups" SelectedItem="{Binding Groups, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Margin="5"/>
+
+                <TextBlock Text="Преподаватели:" Grid.Column="2" VerticalAlignment="Center"/>
+                <ComboBox x:Name="cbTeachers" SelectedItem="{Binding Teachers, UpdateSourceTrigger=PropertyChanged}" Grid.Column="3" Margin="5"/>
+
+                <TextBlock Text="Учебный период:" Grid.Row="1" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding Period, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1" Margin="5"/>
+
+                <TextBlock Text="Форма аттестации:" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding AssessmentForm, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="3" Margin="5"/>
+            </Grid>
+        </GroupBox>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
+            <Button Content="➕ Добавить строку" Click="BtnAddRow_Click" Padding="10,5" Margin="0,0,10,0"/>
+            <Button Content="✏️ Редактировать строку" Click="BtnEditRow_Click" Padding="10,5" Margin="0,0,10,0"/>
+            <!-- НОВАЯ КНОПКА -->
+            <Button Content="❌ Удалить строку" Click="BtnDeleteRow_Click" Padding="10,5"/>
+        </StackPanel>
+
+        <DataGrid x:Name="dgKtp" Grid.Row="2" ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
+          CanUserAddRows="False" GridLinesVisibility="All" Background="White"
+          MouseDoubleClick="dgKtp_MouseDoubleClick">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="№ занятия" Binding="{Binding LessonNums}" Width="auto"/>
+                <DataGridTextColumn Header="Наименование разделов и тем" Binding="{Binding ThemeName}" Width="auto"/>
+                <DataGridTextColumn Header="Кол-во часов" Binding="{Binding Hours}" Width="auto"/>
+                <DataGridTextColumn Header="Календарные сроки" Binding="{Binding Dates}" Width="auto"/>
+                <DataGridTextColumn Header="Вид занятия" Binding="{Binding Type}" Width="auto"/>
+                <DataGridTextColumn Header="Наглядные пособия и тех. средства" Binding="{Binding Aids}" Width="auto"/>
+                <DataGridTextColumn Header="Задания для студентов" Binding="{Binding Tasks}" Width="auto"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Margin="5" Content="Сохранить и закрыть" Click="BtnSave_Click" Padding="15,5" Background="#C8E6C9"/>
+            <Button Margin="5" Content="Экспорт в Word" Click="BtnExportKtpToWord_Click" Padding="15,5" Background="#C8E6C9"/>
+        </StackPanel>
+    </Grid>
+</Window>

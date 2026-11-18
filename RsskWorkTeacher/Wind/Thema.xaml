@@ -1,0 +1,164 @@
+﻿<Window x:Class="RsskWorkTeacher.Wind.Thema"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RsskWorkTeacher.Wind"
+        mc:Ignorable="d"
+               Title="Редактирование темы" Height="450" Width="600"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize">
+    <ScrollViewer>
+        
+    
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="180"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Флажок: Является ли это разделом -->
+        <CheckBox Grid.Row="0" Grid.Column="1" Content="Это раздел (заголовок)" 
+              IsChecked="{Binding IsSection, UpdateSourceTrigger=PropertyChanged}" 
+              Margin="0,5,0,10" FontWeight="Bold"/>
+
+        <!-- Наименование темы -->
+        <TextBlock Text="Наименование разделов и тем:" Grid.Row="1" Grid.Column="0" Margin="0,5,10,5" VerticalAlignment="Top"/>
+        <TextBox Text="{Binding ThemeName, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1" Margin="0,5,0,5" Padding="2"/>
+
+        <!-- Всего часов (скрывается для разделов) -->
+        <TextBlock Text="Всего часов:" Grid.Row="2"  Grid.Column="0" Margin="0,5,10,5" VerticalAlignment="Top">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Visibility" Value="Visible"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSection}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+        <TextBox x:Name="tbTotalHours" Text="{Binding TotalHours, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="HoursTextBox_PreviewTextInput" IsReadOnly="False" Grid.Row="2" Grid.Column="1" Margin="0,5,0,5" Padding="2" Width="100" HorizontalAlignment="Left">
+            <TextBox.Style>
+                <Style TargetType="TextBox">
+                    <Setter Property="Visibility" Value="Visible"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSection}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBox.Style>
+        </TextBox>
+
+        <!-- Компетенции (скрывается для разделов) -->
+        <TextBlock Text="Компетенции:" Grid.Row="3" Grid.Column="0" Margin="0,5,10,5" VerticalAlignment="Top">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Visibility" Value="Visible"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSection}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+        <ComboBox x:Name="cbCompetences" Grid.Row="3" Grid.Column="1" Text="Выбранные компетенции" Margin="0,5,0,5" MinHeight="25" HorizontalAlignment="Left" Width="300">
+            <ComboBox.Style>
+                <Style TargetType="ComboBox">
+                    <Setter Property="Visibility" Value="Visible"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSection}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ComboBox.Style>
+            <ComboBox.ItemContainerStyle>
+                <Style TargetType="ComboBoxItem">
+                    <EventSetter Event="PreviewMouseLeftButtonUp" Handler="ComboBoxItem_PreviewMouseLeftButtonUp"/>
+                </Style>
+            </ComboBox.ItemContainerStyle>
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected}" Margin="0,3"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        
+        <!-- 4. Содержание учебного материала (скрывается для разделов) -->
+        <TextBlock Text="Содержание учебного материала:" Grid.Row="4" Grid.Column="0" Margin="0,10,10,5" VerticalAlignment="Top">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Visibility" Value="Visible"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSection}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+
+        <DataGrid x:Name="dgContentBlocks" CellEditEnding="dgContentBlocks_CellEditEnding" ItemsSource="{Binding ContentBlocks}" Grid.Row="4" Grid.Column="1" Margin="0,5,0,5" 
+                  AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" HeadersVisibility="Column" MinHeight="200"
+                  PreviewKeyDown="dgContentBlocks_PreviewKeyDown">
+            <DataGrid.Style>
+                <Style TargetType="DataGrid">
+                    <Setter Property="Visibility" Value="Visible"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSection}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.Style>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Описание" Width="*" Binding="{Binding Description, UpdateSourceTrigger=PropertyChanged}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="TextWrapping" Value="Wrap"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                    <DataGridTextColumn.EditingElementStyle>
+                        <Style TargetType="TextBox">
+                            <Setter Property="AcceptsReturn" Value="True"/>
+                            <Setter Property="TextWrapping" Value="Wrap"/>
+                            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+                            <Setter Property="MaxHeight" Value="150"/>
+                        </Style>
+                    </DataGridTextColumn.EditingElementStyle>
+                </DataGridTextColumn>
+
+                <!-- ОБНОВЛЕННАЯ КОЛОНКА ЧАСОВ -->
+                <DataGridTextColumn Header="Часы" Width="80" Binding="{Binding Hours, UpdateSourceTrigger=PropertyChanged}">
+                    <DataGridTextColumn.EditingElementStyle>
+                        <Style TargetType="TextBox">
+                            <!-- Запрещаем ввод нецифровых символов -->
+                            <EventSetter Event="PreviewTextInput" Handler="HoursTextBox_PreviewTextInput"/>
+                        </Style>
+                    </DataGridTextColumn.EditingElementStyle>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Кнопки -->
+        <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button Content="Сохранить" Width="100" Height="30" Margin="0,0,10,0" Click="BtnSave_Click" IsDefault="True"/>
+            <Button Content="Отмена" Width="100" Height="30" Click="BtnCancel_Click" IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+    </ScrollViewer>
+</Window>
